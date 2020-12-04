@@ -27,3 +27,24 @@ exports.listarImagenes = async (req, res) => {
     }
     res.status(200).send(imagenes);
 };
+
+exports.subirArchivo = async (req, res, next) => {
+    const archivo = req.files.archivo;
+    const fileName = archivo.name;
+    const path = __dirname + '/../uploads/' + fileName;
+
+    archivo.mv(path, (error) => {
+        if (error) {
+            console.error(error);
+            res.writeHead(500, {
+                'Content-Type': 'application/json'
+            });
+            res.end(JSON.stringify({ status: 'error', message: error }));
+            return;
+        }
+        return res.status(200).send({
+            status: 'success',
+            path: __dirname + '\\uploads\\' + fileName
+        });
+    });
+};

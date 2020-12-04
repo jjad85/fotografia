@@ -6,6 +6,7 @@ const express = require('express'),
     rutas = require('./app/routers/index'),
     config = require('./app/configs/config.js'),
     errorMiddleware = require('./app/middlewares/errorMiddleware'),
+    fileupload = require('express-fileupload'),
     cors = require('cors');
 
 require('express-async-errors');
@@ -16,11 +17,14 @@ app.use(
 );
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fileupload());
 
 rutas(router);
 app.use(cors({ origin: '*' }));
 app.use('/api/v1', router);
 app.use(errorMiddleware);
+app.use(express.static(__dirname));
 
 mongoose.connect(
     `mongodb://` + config.IP_BD + `:` + config.PORT_BD + `/` + config.NAME_BD,
